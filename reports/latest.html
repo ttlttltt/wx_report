@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-06-21 AI 新闻晨报</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #202124;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1769aa;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+    header {
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: news;
+    }
+    li {
+      counter-increment: news;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    li::before {
+      content: counter(news);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: inline-grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    li span {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AI 新闻晨报</h1>
+      <div class="meta">2026-06-21 · 自动筛选摘要 · 最多 8 条</div>
+    </header>
+    <ol>
+      <li><span>特朗普政府施压 Anthropic 引发受益者讨论｜政策变量或改写AI竞争格局</span></li>
+<li><span>iOS 27 将加入多项实用 AI 功能｜苹果AI落地不只靠Siri升级</span></li>
+<li><span>Signal 负责人警告：AI 聊天机器人不是朋友｜提醒用户警惕拟人化依赖</span></li>
+<li><span>诺奖得主 John Jumper 将离开 DeepMind 加盟 Anthropic｜顶尖AI人才流向继续重塑格局</span></li>
+<li><span>具身智能融资升温，资金涌向机器人“大脑”｜模型能力成具身赛道核心筹码</span></li>
+    </ol>
+    <footer>由 GitHub Actions 自动生成。微信卡片只显示预览，完整内容以本页为准。</footer>
+  </main>
+</body>
+</html>
