@@ -242,7 +242,7 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
     api_key = env("OPENAI_API_KEY")
     base_url = env("OPENAI_BASE_URL", DEFAULT_OPENAI_BASE_URL).rstrip("/")
     model = env("OPENAI_MODEL", "gpt-4.1-mini")
-    max_items = int(env("MAX_NEWS_ITEMS", "8"))
+    max_items = int(env("MAX_NEWS_ITEMS", "5"))
     selected = items[:max_items]
     fallback = format_without_ai(selected, target_date)
     if not api_key:
@@ -264,7 +264,9 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
 要求：
 - 日期是 {target_date.isoformat()} 的昨日 AI 新闻。
 - 最多保留 {max_items} 条。
-- 每条包含：标题、一句话摘要、为什么重要、链接。
+- 每条只输出两行：第一行是“序号. 标题”，第二行是“一句话影响判断”。
+- 不要输出链接，不要输出来源，不要输出长摘要。
+- 每条影响判断不超过 35 个中文字符。
 - 优先保留官方发布、开发者生态、严肃分析；弱化转载、融资噪音、纯观点水文。
 - 删除低价值、重复、营销味重的内容。
 - 不要编造新闻里没有的信息。
@@ -300,16 +302,26 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
 def format_without_ai(items: list[NewsItem], target_date: dt.date) -> str:
     if not items:
         return f"{target_date.isoformat()} 没有抓到符合条件的昨日 AI 新闻。"
-    lines = [f"{target_date.isoformat()} 昨日 AI 新闻汇总", ""]
+    lines = []
     for idx, item in enumerate(items, start=1):
-        summary = item.summary[:100] if item.summary else "暂无摘要。"
         lines.append(f"{idx}. {item.title}")
-        lines.append(f"摘要：{summary}")
-        lines.append(f"来源：{item.source}")
-        lines.append(f"级别：{item.tier}")
-        lines.append(f"链接：{item.link}")
+        lines.append(compact_impact(item))
         lines.append("")
     return "\n".join(lines).strip()
+
+
+def compact_impact(item: NewsItem) -> str:
+    text = item.summary.strip() if item.summary else ""
+    if text:
+        text = re.sub(r"\s+", " ", text)
+        return text[:45].rstrip() + ("..." if len(text) > 45 else "")
+    if item.tier == "official":
+        return "官方发布，值得优先关注后续影响。"
+    if item.tier == "developer":
+        return "开发者生态变化，可能影响工具选择。"
+    if item.tier == "analysis":
+        return "偏趋势分析，适合判断行业方向。"
+    return "行业动态，适合快速了解市场变化。"
 
 
 def truncate_wechat_value(value: str, limit: int = 1800) -> str:
@@ -339,7 +351,7 @@ def push_wechat(content: str, target_date: dt.date) -> dict:
             "first": {"value": "昨日 AI 新闻晨报", "color": "#173177"},
             "keyword1": {"value": target_date.isoformat(), "color": "#173177"},
             "keyword2": {"value": "AI 新闻汇总", "color": "#173177"},
-            "keyword3": {"value": truncate_wechat_value(content, 1200), "color": "#111111"},
+            "keyword3": {"value": truncate_wechat_value(content, 900), "color": "#111111"},
             "remark": {"value": "以上为自动筛选摘要，建议只读重点条目。", "color": "#666666"},
         },
     }
@@ -369,10 +381,13 @@ def main() -> int:
             print(f"Warning: failed to fetch {source.get('name', source.get('url'))}: {exc}", file=sys.stderr)
 
     items = filter_items(all_items, start, end)
-    max_items = int(env("MAX_NEWS_ITEMS", "8"))
+    max_items = int(env("MAX_NEWS_ITEMS", "5"))
     content = summarize_with_openai(items[:max_items], target_date)
 
-    print(textwrap.shorten(content.replace("\n", " "), width=500, placeholder="..."))
+    if env("DRY_RUN", "0") == "1":
+        print(content)
+    else:
+        print(textwrap.shorten(content.replace("\n", " "), width=500, placeholder="..."))
     if env("DRY_RUN", "0") == "1":
         print("\nDRY_RUN=1, skipped WeChat push.")
         return 0

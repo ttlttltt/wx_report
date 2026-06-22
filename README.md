@@ -75,7 +75,7 @@ python .\ai_news_push.py
 
 - `OPENAI_MODEL`：默认 `gpt-4.1-mini`
 - `OPENAI_BASE_URL`：默认 `https://api.openai.com/v1`，使用兼容 OpenAI 格式的中转站时改成对应地址，例如 `https://cca.maya.today/v1`
-- `MAX_NEWS_ITEMS`：默认 `8`
+- `MAX_NEWS_ITEMS`：默认 `5`
 - `NEWS_SOURCES_FILE`：默认 `news_sources.json`
 - `LOCAL_TIMEZONE_HOURS`：默认 `8`
 - `DRY_RUN`：设为 `1` 时不推送微信
@@ -90,7 +90,7 @@ OPENAI_BASE_URL=https://cca.maya.today/v1
 
 ## 现实限制
 
-微信公众号模板消息不适合塞很长的日报。第一版建议控制在 5-8 条新闻，每条保留标题、摘要、重要性判断和链接。否则微信里阅读体验会很差。
+微信公众号模板消息不适合塞很长的日报。默认控制在 5 条新闻，每条只保留标题和一句话影响判断。否则微信里阅读体验会很差。
 
 ## 新闻源策略
 
