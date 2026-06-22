@@ -1,20 +1,44 @@
 {
   "sources": [
     {
-      "name": "Google News - AI",
-      "url": "https://news.google.com/rss/search?q=artificial%20intelligence%20when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+      "name": "OpenAI News",
+      "tier": "official",
+      "url": "https://openai.com/news/rss.xml"
     },
     {
-      "name": "Google News - OpenAI",
-      "url": "https://news.google.com/rss/search?q=OpenAI%20OR%20ChatGPT%20when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+      "name": "Google AI Blog",
+      "tier": "official",
+      "url": "https://blog.google/technology/ai/rss/"
     },
     {
-      "name": "Google News - LLM",
-      "url": "https://news.google.com/rss/search?q=large%20language%20model%20OR%20LLM%20when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+      "name": "NVIDIA AI Blog",
+      "tier": "official",
+      "url": "https://blogs.nvidia.com/blog/category/deep-learning/feed/"
+    },
+    {
+      "name": "Hugging Face Blog",
+      "tier": "developer",
+      "url": "https://huggingface.co/blog/feed.xml"
     },
     {
       "name": "MIT Technology Review - AI",
+      "tier": "analysis",
       "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed/"
+    },
+    {
+      "name": "TechCrunch - AI",
+      "tier": "industry",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/"
+    },
+    {
+      "name": "VentureBeat - AI",
+      "tier": "industry",
+      "url": "https://venturebeat.com/category/ai/feed/"
+    },
+    {
+      "name": "QbitAI",
+      "tier": "cn",
+      "url": "https://www.qbitai.com/feed"
     }
   ]
 }

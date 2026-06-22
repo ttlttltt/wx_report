@@ -74,3 +74,15 @@ python .\ai_news_push.py
 ## 现实限制
 
 微信公众号模板消息不适合塞很长的日报。第一版建议控制在 5-8 条新闻，每条保留标题、摘要、重要性判断和链接。否则微信里阅读体验会很差。
+
+## 新闻源策略
+
+默认新闻源已经从 Google News 泛搜索改成高质量固定源，优先级是：
+
+1. 官方发布：OpenAI、Google AI、NVIDIA AI
+2. 开发者生态：Hugging Face
+3. 深度分析：MIT Technology Review
+4. 行业媒体：TechCrunch、VentureBeat
+5. 中文补充：量子位
+
+不要盲目堆新闻源。每天晨报的价值来自筛选，不来自抓得多。

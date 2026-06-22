@@ -50,6 +50,7 @@ class NewsItem:
     link: str
     published: dt.datetime | None
     source: str
+    tier: str = "media"
     summary: str = ""
 
 
@@ -189,6 +190,7 @@ def fetch_rss(source: dict[str, str]) -> list[NewsItem]:
                     link=link.strip(),
                     published=published,
                     source=source.get("name", "RSS"),
+                    tier=source.get("tier", "media"),
                     summary=summary,
                 )
             )
@@ -221,7 +223,14 @@ def filter_items(items: list[NewsItem], start: dt.datetime, end: dt.datetime) ->
         if not is_ai_related(item):
             continue
         filtered.append(item)
-    return sorted(filtered, key=lambda x: x.published or dt.datetime.min.replace(tzinfo=dt.timezone.utc), reverse=True)
+    tier_rank = {"official": 0, "developer": 1, "analysis": 2, "industry": 3, "cn": 4, "media": 5}
+    return sorted(
+        filtered,
+        key=lambda x: (
+            tier_rank.get(x.tier, 9),
+            -(x.published or dt.datetime.min.replace(tzinfo=dt.timezone.utc)).timestamp(),
+        ),
+    )
 
 
 def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
@@ -240,7 +249,7 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
         )
 
     source_text = "\n".join(
-        f"{idx}. 标题：{item.title}\n来源：{item.source}\n摘要：{item.summary[:400]}\n链接：{item.link}"
+        f"{idx}. 标题：{item.title}\n来源：{item.source}\n来源级别：{item.tier}\n摘要：{item.summary[:400]}\n链接：{item.link}"
         for idx, item in enumerate(selected, start=1)
     )
     prompt = f"""
@@ -250,6 +259,7 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
 - 日期是 {target_date.isoformat()} 的昨日 AI 新闻。
 - 最多保留 {max_items} 条。
 - 每条包含：标题、一句话摘要、为什么重要、链接。
+- 优先保留官方发布、开发者生态、严肃分析；弱化转载、融资噪音、纯观点水文。
 - 删除低价值、重复、营销味重的内容。
 - 不要编造新闻里没有的信息。
 - 输出适合直接在微信模板消息里阅读，简洁但有判断。
@@ -286,6 +296,7 @@ def format_without_ai(items: list[NewsItem], target_date: dt.date) -> str:
         lines.append(f"{idx}. {item.title}")
         lines.append(f"摘要：{summary}")
         lines.append(f"来源：{item.source}")
+        lines.append(f"级别：{item.tier}")
         lines.append(f"链接：{item.link}")
         lines.append("")
     return "\n".join(lines).strip()
