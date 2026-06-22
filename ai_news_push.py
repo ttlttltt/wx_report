@@ -324,6 +324,22 @@ def compact_impact(item: NewsItem) -> str:
     return "行业动态，适合快速了解市场变化。"
 
 
+def split_digest_items(content: str, max_items: int = 5) -> list[str]:
+    blocks = [block.strip() for block in re.split(r"\n\s*\n", content.strip()) if block.strip()]
+    items: list[str] = []
+    for block in blocks[:max_items]:
+        lines = [line.strip() for line in block.splitlines() if line.strip()]
+        if not lines:
+            continue
+        title = lines[0]
+        impact = lines[1] if len(lines) > 1 else ""
+        value = title if not impact else f"{title}\n{impact}"
+        items.append(truncate_wechat_value(value, 180))
+    while len(items) < max_items:
+        items.append("无")
+    return items
+
+
 def truncate_wechat_value(value: str, limit: int = 1800) -> str:
     value = value.strip()
     if len(value) <= limit:
@@ -344,6 +360,7 @@ def get_wechat_access_token() -> str:
 def push_wechat(content: str, target_date: dt.date) -> dict:
     token = get_wechat_access_token()
     url = f"{WECHAT_TEMPLATE_URL}?access_token={urllib.parse.quote(token)}"
+    digest_items = split_digest_items(content)
     payload = {
         "touser": env("WECHAT_OPENID", required=True),
         "template_id": env("WECHAT_TEMPLATE_ID", required=True),
@@ -351,8 +368,12 @@ def push_wechat(content: str, target_date: dt.date) -> dict:
             "first": {"value": "昨日 AI 新闻晨报", "color": "#173177"},
             "keyword1": {"value": target_date.isoformat(), "color": "#173177"},
             "keyword2": {"value": "AI 新闻汇总", "color": "#173177"},
-            "keyword3": {"value": truncate_wechat_value(content, 900), "color": "#111111"},
-            "remark": {"value": "以上为自动筛选摘要，建议只读重点条目。", "color": "#666666"},
+            "keyword3": {"value": digest_items[0], "color": "#111111"},
+            "keyword4": {"value": digest_items[1], "color": "#111111"},
+            "keyword5": {"value": digest_items[2], "color": "#111111"},
+            "keyword6": {"value": digest_items[3], "color": "#111111"},
+            "keyword7": {"value": digest_items[4], "color": "#111111"},
+            "remark": {"value": "以上为自动筛选摘要。", "color": "#666666"},
         },
     }
     response = http_request(url, method="POST", payload=payload)
