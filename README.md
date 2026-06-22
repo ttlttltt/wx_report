@@ -82,7 +82,7 @@ python .\ai_news_push.py
 
 ## 可配置环境变量
 
-- `OPENAI_MODEL`：默认 `gpt-4.1-mini`
+- `OPENAI_MODEL`：默认 `gpt5.5`
 - `OPENAI_BASE_URL`：默认 `https://api.openai.com/v1`，使用兼容 OpenAI 格式的中转站时改成对应地址，例如 `https://cca.maya.today/v1`
 - `MAX_NEWS_ITEMS`：默认 `5`
 - `NEWS_SOURCES_FILE`：默认 `news_sources.json`
