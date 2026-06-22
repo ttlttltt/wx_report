@@ -339,7 +339,8 @@ def push_wechat(content: str, target_date: dt.date) -> dict:
             "first": {"value": "昨日 AI 新闻晨报", "color": "#173177"},
             "keyword1": {"value": target_date.isoformat(), "color": "#173177"},
             "keyword2": {"value": "AI 新闻汇总", "color": "#173177"},
-            "remark": {"value": truncate_wechat_value(content), "color": "#111111"},
+            "keyword3": {"value": truncate_wechat_value(content, 1200), "color": "#111111"},
+            "remark": {"value": "以上为自动筛选摘要，建议只读重点条目。", "color": "#666666"},
         },
     }
     response = http_request(url, method="POST", payload=payload)
