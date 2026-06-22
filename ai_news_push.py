@@ -349,7 +349,12 @@ def compact_impact(item: NewsItem) -> str:
 
 
 def split_digest_items(content: str, max_items: int = 8) -> list[str]:
-    blocks = [block.strip() for block in re.split(r"\n\s*\n", content.strip()) if block.strip()]
+    raw = content.strip()
+    if not raw:
+        return []
+    blocks = [block.strip() for block in re.split(r"\n\s*\n", raw) if block.strip()]
+    if len(blocks) <= 1:
+        blocks = [line.strip() for line in raw.splitlines() if line.strip()]
     items: list[str] = []
     for block in blocks[:max_items]:
         lines = [line.strip() for line in block.splitlines() if line.strip()]
@@ -369,7 +374,7 @@ def format_adaptive_digest(content: str, max_items: int = 8) -> str:
     items = split_digest_items(content, max_items)
     if not items:
         return "昨日没有筛选出值得推送的 AI 新闻。"
-    return "\n\n".join(f"{idx}. {item}" for idx, item in enumerate(items, start=1))
+    return "\n".join(f"{idx}. {item}" for idx, item in enumerate(items, start=1))
 
 
 def truncate_wechat_value(value: str, limit: int = 1800) -> str:
@@ -394,6 +399,7 @@ def push_wechat(content: str, target_date: dt.date) -> dict:
     url = f"{WECHAT_TEMPLATE_URL}?access_token={urllib.parse.quote(token)}"
     max_items = int(env("MAX_NEWS_ITEMS", "8"))
     digest = format_adaptive_digest(content, max_items)
+    print(f"WeChat digest preview: {textwrap.shorten(digest.replace(chr(10), ' / '), width=500, placeholder='...')}")
     payload = {
         "touser": env("WECHAT_OPENID", required=True),
         "template_id": env("WECHAT_TEMPLATE_ID", required=True),
@@ -401,7 +407,7 @@ def push_wechat(content: str, target_date: dt.date) -> dict:
             "first": {"value": "昨日 AI 新闻晨报", "color": "#173177"},
             "keyword1": {"value": target_date.isoformat(), "color": "#173177"},
             "keyword2": {"value": "AI 新闻汇总", "color": "#173177"},
-            "keyword3": {"value": truncate_wechat_value(digest, 1500), "color": "#111111"},
+            "keyword3": {"value": truncate_wechat_value(digest, 900), "color": "#111111"},
             "remark": {"value": "以上为自动筛选摘要。", "color": "#666666"},
         },
     }

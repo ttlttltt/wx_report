@@ -26,8 +26,7 @@
 日期：{{keyword1.DATA}}
 类型：{{keyword2.DATA}}
 
-摘要：
-{{keyword3.DATA}}
+摘要：{{keyword3.DATA}}
 
 {{remark.DATA}}
 ```
