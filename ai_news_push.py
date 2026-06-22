@@ -253,7 +253,7 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
     api_key = env("OPENAI_API_KEY")
     base_url = env("OPENAI_BASE_URL", DEFAULT_OPENAI_BASE_URL).rstrip("/")
     model = env("OPENAI_MODEL") or "gpt-5.5"
-    max_items = int(env("MAX_NEWS_ITEMS", "5"))
+    max_items = int(env("MAX_NEWS_ITEMS", "8"))
     selected = items[:max_items]
     fallback = format_without_ai(selected, target_date)
     if not api_key:
@@ -348,7 +348,7 @@ def compact_impact(item: NewsItem) -> str:
     return "行业动态，适合快速了解市场变化。"
 
 
-def split_digest_items(content: str, max_items: int = 5) -> list[str]:
+def split_digest_items(content: str, max_items: int = 8) -> list[str]:
     blocks = [block.strip() for block in re.split(r"\n\s*\n", content.strip()) if block.strip()]
     items: list[str] = []
     for block in blocks[:max_items]:
@@ -362,9 +362,14 @@ def split_digest_items(content: str, max_items: int = 5) -> list[str]:
             impact = lines[1] if len(lines) > 1 else ""
             value = format_digest_line(title, impact)
         items.append(truncate_wechat_value(value, 160))
-    while len(items) < max_items:
-        items.append("-")
     return items
+
+
+def format_adaptive_digest(content: str, max_items: int = 8) -> str:
+    items = split_digest_items(content, max_items)
+    if not items:
+        return "昨日没有筛选出值得推送的 AI 新闻。"
+    return "\n\n".join(f"{idx}. {item}" for idx, item in enumerate(items, start=1))
 
 
 def truncate_wechat_value(value: str, limit: int = 1800) -> str:
@@ -387,7 +392,8 @@ def get_wechat_access_token() -> str:
 def push_wechat(content: str, target_date: dt.date) -> dict:
     token = get_wechat_access_token()
     url = f"{WECHAT_TEMPLATE_URL}?access_token={urllib.parse.quote(token)}"
-    digest_items = split_digest_items(content)
+    max_items = int(env("MAX_NEWS_ITEMS", "8"))
+    digest = format_adaptive_digest(content, max_items)
     payload = {
         "touser": env("WECHAT_OPENID", required=True),
         "template_id": env("WECHAT_TEMPLATE_ID", required=True),
@@ -395,11 +401,7 @@ def push_wechat(content: str, target_date: dt.date) -> dict:
             "first": {"value": "昨日 AI 新闻晨报", "color": "#173177"},
             "keyword1": {"value": target_date.isoformat(), "color": "#173177"},
             "keyword2": {"value": "AI 新闻汇总", "color": "#173177"},
-            "keyword3": {"value": digest_items[0], "color": "#111111"},
-            "keyword4": {"value": digest_items[1], "color": "#111111"},
-            "keyword5": {"value": digest_items[2], "color": "#111111"},
-            "keyword6": {"value": digest_items[3], "color": "#111111"},
-            "keyword7": {"value": digest_items[4], "color": "#111111"},
+            "keyword3": {"value": truncate_wechat_value(digest, 1500), "color": "#111111"},
             "remark": {"value": "以上为自动筛选摘要。", "color": "#666666"},
         },
     }
@@ -429,7 +431,7 @@ def main() -> int:
             print(f"Warning: failed to fetch {source.get('name', source.get('url'))}: {exc}", file=sys.stderr)
 
     items = filter_items(all_items, start, end)
-    max_items = int(env("MAX_NEWS_ITEMS", "5"))
+    max_items = int(env("MAX_NEWS_ITEMS", "8"))
     content = summarize_with_openai(items[:max_items], target_date)
 
     if env("DRY_RUN", "0") == "1":
