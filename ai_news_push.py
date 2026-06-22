@@ -17,6 +17,11 @@ from typing import Iterable
 WECHAT_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token"
 WECHAT_TEMPLATE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send"
 DEFAULT_OPENAI_BASE_URL = "https://api.openai.com/v1"
+DEFAULT_USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/125.0 Safari/537.36 ai-news-wechat-bot/1.0"
+)
 
 AI_KEYWORDS = (
     "ai",
@@ -70,7 +75,7 @@ def http_request(
     timeout: int = 30,
 ) -> dict | str:
     data = None
-    request_headers = headers or {}
+    request_headers = {"User-Agent": DEFAULT_USER_AGENT, **(headers or {})}
     if payload is not None:
         data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         request_headers = {"Content-Type": "application/json", **request_headers}
@@ -269,20 +274,24 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
 {source_text}
 """.strip()
 
-    response = http_request(
-        f"{base_url}/chat/completions",
-        method="POST",
-        headers={"Authorization": f"Bearer {api_key}"},
-        payload={
-            "model": model,
-            "messages": [
-                {"role": "system", "content": "你是严格、克制、重视信息密度的中文 AI 新闻编辑。"},
-                {"role": "user", "content": prompt},
-            ],
-            "temperature": 0.2,
-        },
-        timeout=60,
-    )
+    try:
+        response = http_request(
+            f"{base_url}/chat/completions",
+            method="POST",
+            headers={"Authorization": f"Bearer {api_key}"},
+            payload={
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": "你是严格、克制、重视信息密度的中文 AI 新闻编辑。"},
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": 0.2,
+            },
+            timeout=60,
+        )
+    except Exception as exc:
+        print(f"Warning: AI summarization failed, using fallback digest: {exc}", file=sys.stderr)
+        return fallback
     if not isinstance(response, dict):
         return fallback
     return response["choices"][0]["message"]["content"].strip()
