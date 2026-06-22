@@ -16,7 +16,7 @@ from typing import Iterable
 
 WECHAT_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token"
 WECHAT_TEMPLATE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send"
-OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions"
+DEFAULT_OPENAI_BASE_URL = "https://api.openai.com/v1"
 
 AI_KEYWORDS = (
     "ai",
@@ -235,6 +235,7 @@ def filter_items(items: list[NewsItem], start: dt.datetime, end: dt.datetime) ->
 
 def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
     api_key = env("OPENAI_API_KEY")
+    base_url = env("OPENAI_BASE_URL", DEFAULT_OPENAI_BASE_URL).rstrip("/")
     model = env("OPENAI_MODEL", "gpt-4.1-mini")
     max_items = int(env("MAX_NEWS_ITEMS", "8"))
     selected = items[:max_items]
@@ -269,7 +270,7 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
 """.strip()
 
     response = http_request(
-        OPENAI_CHAT_URL,
+        f"{base_url}/chat/completions",
         method="POST",
         headers={"Authorization": f"Bearer {api_key}"},
         payload={

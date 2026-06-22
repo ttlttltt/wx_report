@@ -66,10 +66,19 @@ python .\ai_news_push.py
 ## 可配置环境变量
 
 - `OPENAI_MODEL`：默认 `gpt-4.1-mini`
+- `OPENAI_BASE_URL`：默认 `https://api.openai.com/v1`，使用兼容 OpenAI 格式的中转站时改成对应地址，例如 `https://cca.maya.today/v1`
 - `MAX_NEWS_ITEMS`：默认 `8`
 - `NEWS_SOURCES_FILE`：默认 `news_sources.json`
 - `LOCAL_TIMEZONE_HOURS`：默认 `8`
 - `DRY_RUN`：设为 `1` 时不推送微信
+
+如果你使用中转站，把中转站给你的 Key 填到 `OPENAI_API_KEY`，并在 GitHub 仓库的 `Settings -> Secrets and variables -> Actions -> Variables` 里新增：
+
+```text
+OPENAI_BASE_URL=https://cca.maya.today/v1
+```
+
+注意：中转站不是 OpenAI 官方服务，请自行评估稳定性、隐私和计费风险。
 
 ## 现实限制
 

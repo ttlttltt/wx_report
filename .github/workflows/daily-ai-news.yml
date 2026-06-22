@@ -24,6 +24,7 @@ jobs:
           WECHAT_OPENID: ${{ secrets.WECHAT_OPENID }}
           WECHAT_TEMPLATE_ID: ${{ secrets.WECHAT_TEMPLATE_ID }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
           OPENAI_MODEL: gpt-4.1-mini
           MAX_NEWS_ITEMS: "8"
           LOCAL_TIMEZONE_HOURS: "8"
