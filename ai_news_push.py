@@ -10,6 +10,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
+from pathlib import Path
 from dataclasses import dataclass
 from typing import Iterable
 
@@ -377,6 +378,124 @@ def format_adaptive_digest(content: str, max_items: int = 8) -> str:
     return "\n".join(f"{idx}. {item}" for idx, item in enumerate(items, start=1))
 
 
+def generate_html_report(content: str, target_date: dt.date) -> str:
+    items = split_digest_items(content, int(env("MAX_NEWS_ITEMS", "8")))
+    item_html = "\n".join(
+        f"<li><span>{html.escape(item)}</span></li>"
+        for item in items
+    )
+    if not item_html:
+        item_html = "<li><span>昨日没有筛选出值得推送的 AI 新闻。</span></li>"
+    title = f"{target_date.isoformat()} AI 新闻晨报"
+    return f"""<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{html.escape(title)}</title>
+  <style>
+    :root {{
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #202124;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1769aa;
+    }}
+    body {{
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }}
+    main {{
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }}
+    header {{
+      margin-bottom: 18px;
+    }}
+    h1 {{
+      margin: 0 0 6px;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }}
+    .meta {{
+      color: var(--muted);
+      font-size: 14px;
+    }}
+    ol {{
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: news;
+    }}
+    li {{
+      counter-increment: news;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }}
+    li::before {{
+      content: counter(news);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: inline-grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 2px;
+    }}
+    li span {{
+      white-space: pre-wrap;
+      word-break: break-word;
+    }}
+    footer {{
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }}
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AI 新闻晨报</h1>
+      <div class="meta">{html.escape(target_date.isoformat())} · 自动筛选摘要 · 最多 8 条</div>
+    </header>
+    <ol>
+      {item_html}
+    </ol>
+    <footer>由 GitHub Actions 自动生成。微信卡片只显示预览，完整内容以本页为准。</footer>
+  </main>
+</body>
+</html>
+"""
+
+
+def write_report(content: str, target_date: dt.date) -> str:
+    report_dir = Path("reports")
+    report_dir.mkdir(exist_ok=True)
+    html_report = generate_html_report(content, target_date)
+    dated = report_dir / f"{target_date.isoformat()}.html"
+    latest = report_dir / "latest.html"
+    dated.write_text(html_report, encoding="utf-8")
+    latest.write_text(html_report, encoding="utf-8")
+    return str(dated)
+
+
 def truncate_wechat_value(value: str, limit: int = 1800) -> str:
     value = value.strip()
     if len(value) <= limit:
@@ -394,6 +513,13 @@ def get_wechat_access_token() -> str:
     return response["access_token"]
 
 
+def report_public_url(target_date: dt.date) -> str:
+    base_url = env("REPORT_BASE_URL")
+    if not base_url:
+        return ""
+    return f"{base_url.rstrip('/')}/reports/{target_date.isoformat()}.html"
+
+
 def push_wechat(content: str, target_date: dt.date) -> dict:
     token = get_wechat_access_token()
     url = f"{WECHAT_TEMPLATE_URL}?access_token={urllib.parse.quote(token)}"
@@ -403,12 +529,13 @@ def push_wechat(content: str, target_date: dt.date) -> dict:
     payload = {
         "touser": env("WECHAT_OPENID", required=True),
         "template_id": env("WECHAT_TEMPLATE_ID", required=True),
+        "url": report_public_url(target_date),
         "data": {
             "first": {"value": "昨日 AI 新闻晨报", "color": "#173177"},
             "keyword1": {"value": target_date.isoformat(), "color": "#173177"},
             "keyword2": {"value": "AI 新闻汇总", "color": "#173177"},
             "keyword3": {"value": truncate_wechat_value(digest, 900), "color": "#111111"},
-            "remark": {"value": "以上为自动筛选摘要。", "color": "#666666"},
+            "remark": {"value": "点击卡片阅读完整日报。", "color": "#666666"},
         },
     }
     response = http_request(url, method="POST", payload=payload)
@@ -439,6 +566,8 @@ def main() -> int:
     items = filter_items(all_items, start, end)
     max_items = int(env("MAX_NEWS_ITEMS", "8"))
     content = summarize_with_openai(items[:max_items], target_date)
+    report_path = write_report(content, target_date)
+    print(f"Report written: {report_path}")
 
     if env("DRY_RUN", "0") == "1":
         print(content)

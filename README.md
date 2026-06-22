@@ -86,9 +86,30 @@ python .\ai_news_push.py
 ```text
 OPENAI_BASE_URL=https://cca.maya.today/v1
 OPENAI_MODEL=中转站支持的模型名
+REPORT_BASE_URL=https://你的用户名.github.io/wx_report
 ```
 
 注意：中转站不是 OpenAI 官方服务，请自行评估稳定性、隐私和计费风险。
+
+## GitHub Pages
+
+为了让微信卡片可以点击查看完整日报，需要开启 GitHub Pages：
+
+1. 打开仓库 `Settings -> Pages`
+2. `Build and deployment` 选择 `Deploy from a branch`
+3. Branch 选择 `main`，目录选择 `/root`
+4. 保存后，把页面地址配置到 Actions Variables：
+
+```text
+REPORT_BASE_URL=https://你的用户名.github.io/wx_report
+```
+
+脚本每天会生成：
+
+- `reports/YYYY-MM-DD.html`
+- `reports/latest.html`
+
+微信模板消息只做预览，完整阅读请点卡片进入 HTML 页面。
 
 ## 现实限制
 
