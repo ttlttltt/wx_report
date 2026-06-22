@@ -252,7 +252,7 @@ def filter_items(items: list[NewsItem], start: dt.datetime, end: dt.datetime) ->
 def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
     api_key = env("OPENAI_API_KEY")
     base_url = env("OPENAI_BASE_URL", DEFAULT_OPENAI_BASE_URL).rstrip("/")
-    model = env("OPENAI_MODEL") or "gpt5.5"
+    model = env("OPENAI_MODEL") or "gpt-5.5"
     max_items = int(env("MAX_NEWS_ITEMS", "5"))
     selected = items[:max_items]
     fallback = format_without_ai(selected, target_date)
