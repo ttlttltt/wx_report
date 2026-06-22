@@ -25,7 +25,7 @@ jobs:
           WECHAT_TEMPLATE_ID: ${{ secrets.WECHAT_TEMPLATE_ID }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL }}
-          OPENAI_MODEL: gpt-4.1-mini
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           MAX_NEWS_ITEMS: "5"
           LOCAL_TIMEZONE_HOURS: "8"
         run: python ai_news_push.py

@@ -93,6 +93,7 @@ python .\ai_news_push.py
 
 ```text
 OPENAI_BASE_URL=https://cca.maya.today/v1
+OPENAI_MODEL=中转站支持的模型名
 ```
 
 注意：中转站不是 OpenAI 官方服务，请自行评估稳定性、隐私和计费风险。

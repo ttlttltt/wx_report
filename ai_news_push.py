@@ -61,9 +61,20 @@ class NewsItem:
 
 def env(name: str, default: str | None = None, required: bool = False) -> str:
     value = os.getenv(name, default)
+    if isinstance(value, str):
+        value = value.strip()
     if required and not value:
         raise RuntimeError(f"Missing required environment variable: {name}")
     return value or ""
+
+
+def mask_secret(value: str) -> str:
+    value = value.strip()
+    if not value:
+        return "<empty>"
+    if len(value) <= 8:
+        return f"{value[:2]}***"
+    return f"{value[:4]}...{value[-4:]}"
 
 
 def http_request(
@@ -241,12 +252,13 @@ def filter_items(items: list[NewsItem], start: dt.datetime, end: dt.datetime) ->
 def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
     api_key = env("OPENAI_API_KEY")
     base_url = env("OPENAI_BASE_URL", DEFAULT_OPENAI_BASE_URL).rstrip("/")
-    model = env("OPENAI_MODEL", "gpt-4.1-mini")
+    model = env("OPENAI_MODEL") or "gpt-4.1-mini"
     max_items = int(env("MAX_NEWS_ITEMS", "5"))
     selected = items[:max_items]
     fallback = format_without_ai(selected, target_date)
     if not api_key:
         return fallback
+    print(f"AI config: base_url={base_url}, model={model}, key={mask_secret(api_key)}")
     if api_key.startswith("wx"):
         raise RuntimeError(
             "OPENAI_API_KEY looks like a WeChat appID. "
