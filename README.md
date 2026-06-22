@@ -1,0 +1,76 @@
+# 微信 AI 新闻晨报
+
+每天早上 8:00 抓取昨日 AI 新闻，生成中文摘要，并通过微信公众号测试号推送到你的微信。
+
+## 方案边界
+
+本项目使用微信公众号测试号推送，不使用个人微信机器人。个人微信自动化容易失效、被风控，长期维护成本不值得。
+
+## 准备微信公众号测试号
+
+1. 打开微信公众平台测试号：https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login
+2. 用你的微信扫码关注测试号。
+3. 记录测试号页面里的 `appID`、`appsecret`。
+4. 在测试号页面找到你的微信号对应的 `openid`。
+5. 新增模板，模板内容建议：
+
+```text
+{{date.DATA}}
+
+{{summary.DATA}}
+
+{{remark.DATA}}
+```
+
+6. 记录模板的 `template_id`。
+
+## 本地试运行
+
+PowerShell：
+
+```powershell
+$env:DRY_RUN="1"
+$env:OPENAI_API_KEY="你的 OpenAI API Key"
+python .\ai_news_push.py
+```
+
+`DRY_RUN=1` 会只打印摘要，不会推送微信。
+
+如果你只是先测试抓新闻流程，可以暂时不要设置 `OPENAI_API_KEY`。注意：以 `wx...` 开头的是微信测试号 `appID`，不是 OpenAI API Key，不要填到 `OPENAI_API_KEY`。
+
+真正推送前设置：
+
+```powershell
+$env:WECHAT_APP_ID="你的 appID"
+$env:WECHAT_APP_SECRET="你的 appsecret"
+$env:WECHAT_OPENID="你的 openid"
+$env:WECHAT_TEMPLATE_ID="你的 template_id"
+$env:OPENAI_API_KEY="你的 OpenAI API Key"
+python .\ai_news_push.py
+```
+
+如果不设置 `OPENAI_API_KEY`，脚本会退化成标题列表，方便先验证微信推送链路。
+
+## GitHub Actions 定时
+
+把下面 secrets 配到仓库的 `Settings -> Secrets and variables -> Actions`：
+
+- `WECHAT_APP_ID`
+- `WECHAT_APP_SECRET`
+- `WECHAT_OPENID`
+- `WECHAT_TEMPLATE_ID`
+- `OPENAI_API_KEY`
+
+工作流会在北京时间每天 08:00 执行。
+
+## 可配置环境变量
+
+- `OPENAI_MODEL`：默认 `gpt-4.1-mini`
+- `MAX_NEWS_ITEMS`：默认 `8`
+- `NEWS_SOURCES_FILE`：默认 `news_sources.json`
+- `LOCAL_TIMEZONE_HOURS`：默认 `8`
+- `DRY_RUN`：设为 `1` 时不推送微信
+
+## 现实限制
+
+微信公众号模板消息不适合塞很长的日报。第一版建议控制在 5-8 条新闻，每条保留标题、摘要、重要性判断和链接。否则微信里阅读体验会很差。

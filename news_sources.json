@@ -1,0 +1,20 @@
+{
+  "sources": [
+    {
+      "name": "Google News - AI",
+      "url": "https://news.google.com/rss/search?q=artificial%20intelligence%20when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    },
+    {
+      "name": "Google News - OpenAI",
+      "url": "https://news.google.com/rss/search?q=OpenAI%20OR%20ChatGPT%20when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    },
+    {
+      "name": "Google News - LLM",
+      "url": "https://news.google.com/rss/search?q=large%20language%20model%20OR%20LLM%20when:1d&hl=zh-CN&gl=CN&ceid=CN:zh-Hans"
+    },
+    {
+      "name": "MIT Technology Review - AI",
+      "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed/"
+    }
+  ]
+}
