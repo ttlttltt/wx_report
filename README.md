@@ -26,15 +26,15 @@
 日期：{{keyword1.DATA}}
 类型：{{keyword2.DATA}}
 
-1：{{keyword3.DATA}}
+1. {{keyword3.DATA}}
 
-2：{{keyword4.DATA}}
+2. {{keyword4.DATA}}
 
-3：{{keyword5.DATA}}
+3. {{keyword5.DATA}}
 
-4：{{keyword6.DATA}}
+4. {{keyword6.DATA}}
 
-5：{{keyword7.DATA}}
+5. {{keyword7.DATA}}
 
 {{remark.DATA}}
 ```

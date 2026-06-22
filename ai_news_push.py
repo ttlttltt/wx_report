@@ -276,7 +276,8 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
 要求：
 - 日期是 {target_date.isoformat()} 的昨日 AI 新闻。
 - 最多保留 {max_items} 条。
-- 每条只输出两行：第一行是“序号. 标题”，第二行是“一句话影响判断”。
+- 每条只输出一行，格式是“标题｜一句话影响判断”。
+- 不要输出序号，模板会自动编号。
 - 不要输出链接，不要输出来源，不要输出长摘要。
 - 每条影响判断不超过 35 个中文字符。
 - 优先保留官方发布、开发者生态、严肃分析；弱化转载、融资噪音、纯观点水文。
@@ -315,11 +316,22 @@ def format_without_ai(items: list[NewsItem], target_date: dt.date) -> str:
     if not items:
         return f"{target_date.isoformat()} 没有抓到符合条件的昨日 AI 新闻。"
     lines = []
-    for idx, item in enumerate(items, start=1):
-        lines.append(f"{idx}. {item.title}")
-        lines.append(compact_impact(item))
+    for item in items:
+        lines.append(format_digest_line(item.title, compact_impact(item)))
         lines.append("")
     return "\n".join(lines).strip()
+
+
+def clean_number_prefix(value: str) -> str:
+    return re.sub(r"^\s*\d+\s*[\.、:：]\s*", "", value).strip()
+
+
+def format_digest_line(title: str, impact: str) -> str:
+    title = clean_number_prefix(title)
+    impact = clean_number_prefix(impact)
+    if not impact:
+        return title
+    return f"{title}｜{impact}"
 
 
 def compact_impact(item: NewsItem) -> str:
@@ -343,12 +355,15 @@ def split_digest_items(content: str, max_items: int = 5) -> list[str]:
         lines = [line.strip() for line in block.splitlines() if line.strip()]
         if not lines:
             continue
-        title = lines[0]
-        impact = lines[1] if len(lines) > 1 else ""
-        value = title if not impact else f"{title}\n{impact}"
-        items.append(truncate_wechat_value(value, 180))
+        if len(lines) == 1 and "｜" in lines[0]:
+            value = clean_number_prefix(lines[0])
+        else:
+            title = lines[0]
+            impact = lines[1] if len(lines) > 1 else ""
+            value = format_digest_line(title, impact)
+        items.append(truncate_wechat_value(value, 160))
     while len(items) < max_items:
-        items.append("无")
+        items.append("-")
     return items
 
 
