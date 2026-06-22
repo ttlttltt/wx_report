@@ -336,9 +336,10 @@ def push_wechat(content: str, target_date: dt.date) -> dict:
         "touser": env("WECHAT_OPENID", required=True),
         "template_id": env("WECHAT_TEMPLATE_ID", required=True),
         "data": {
-            "date": {"value": target_date.isoformat(), "color": "#173177"},
-            "summary": {"value": truncate_wechat_value(content), "color": "#111111"},
-            "remark": {"value": "完整链接见每条新闻。", "color": "#666666"},
+            "first": {"value": "昨日 AI 新闻晨报", "color": "#173177"},
+            "keyword1": {"value": target_date.isoformat(), "color": "#173177"},
+            "keyword2": {"value": "AI 新闻汇总", "color": "#173177"},
+            "remark": {"value": truncate_wechat_value(content), "color": "#111111"},
         },
     }
     response = http_request(url, method="POST", payload=payload)

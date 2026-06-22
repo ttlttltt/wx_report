@@ -12,12 +12,19 @@
 2. 用你的微信扫码关注测试号。
 3. 记录测试号页面里的 `appID`、`appsecret`。
 4. 在测试号页面找到你的微信号对应的 `openid`。
-5. 新增模板，模板内容建议：
+5. 新增模板，模板标题建议写：
 
 ```text
-{{date.DATA}}
+昨日 AI 新闻晨报
+```
 
-{{summary.DATA}}
+模板内容建议：
+
+```text
+{{first.DATA}}
+
+日期：{{keyword1.DATA}}
+类型：{{keyword2.DATA}}
 
 {{remark.DATA}}
 ```
