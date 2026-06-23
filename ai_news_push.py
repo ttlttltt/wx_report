@@ -501,6 +501,24 @@ def write_report(content: str, target_date: dt.date) -> str:
     return str(dated)
 
 
+def push_state_path(local_date: dt.date) -> Path:
+    report_dir = Path("reports")
+    report_dir.mkdir(exist_ok=True)
+    return report_dir / f"pushed-{local_date.isoformat()}.txt"
+
+
+def should_skip_push(local_date: dt.date) -> bool:
+    if env("FORCE_PUSH") == "workflow_dispatch":
+        return False
+    if env("DRY_RUN", "0") == "1":
+        return False
+    return push_state_path(local_date).exists()
+
+
+def mark_pushed(local_date: dt.date) -> None:
+    push_state_path(local_date).write_text(dt.datetime.now(dt.timezone.utc).isoformat(), encoding="utf-8")
+
+
 def split_markdown_digest(content: str, max_items: int = 8) -> list[str]:
     raw = content.strip()
     if not raw:
@@ -559,6 +577,11 @@ def main() -> int:
     source_path = env("NEWS_SOURCES_FILE", "news_sources.json")
     tz = dt.timezone(dt.timedelta(hours=int(env("LOCAL_TIMEZONE_HOURS", "8"))))
     start, end, target_date = yesterday_range(tz)
+    today = dt.datetime.now(tz).date()
+
+    if should_skip_push(today):
+        print(f"Already pushed for {today.isoformat()}, skipping.")
+        return 0
 
     all_items: list[NewsItem] = []
     for source in load_sources(source_path):
@@ -583,6 +606,7 @@ def main() -> int:
 
     result = push_pushplus(content, target_date)
     print(f"PushPlus push succeeded: {result}")
+    mark_pushed(today)
     return 0
 
 

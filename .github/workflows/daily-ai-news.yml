@@ -3,6 +3,9 @@ name: Daily AI News
 on:
   schedule:
     - cron: "0 4 * * *"
+    - cron: "10 4 * * *"
+    - cron: "25 4 * * *"
+    - cron: "45 4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -29,6 +32,7 @@ jobs:
           REPORT_BASE_URL: ${{ vars.REPORT_BASE_URL }}
           MAX_NEWS_ITEMS: "8"
           LOCAL_TIMEZONE_HOURS: "8"
+          FORCE_PUSH: ${{ github.event_name }}
         run: python ai_news_push.py
 
       - name: Commit generated report
