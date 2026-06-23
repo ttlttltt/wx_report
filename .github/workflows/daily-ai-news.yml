@@ -1,13 +1,12 @@
 name: Daily AI News
 
 on:
-  schedule:
-    - cron: "35 6 * * *"
-    - cron: "40 6 * * *"
-    - cron: "50 6 * * *"
-    - cron: "0 7 * * *"
-    - cron: "10 7 * * *"
   workflow_dispatch:
+    inputs:
+      force:
+        description: "Force push even if today's report was already sent"
+        required: false
+        default: "false"
 
 permissions:
   contents: write
@@ -33,7 +32,7 @@ jobs:
           REPORT_BASE_URL: ${{ vars.REPORT_BASE_URL }}
           MAX_NEWS_ITEMS: "8"
           LOCAL_TIMEZONE_HOURS: "8"
-          FORCE_PUSH: ${{ github.event_name }}
+          FORCE_PUSH: ${{ github.event.inputs.force }}
         run: python ai_news_push.py
 
       - name: Commit generated report

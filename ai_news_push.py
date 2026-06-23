@@ -508,7 +508,7 @@ def push_state_path(local_date: dt.date) -> Path:
 
 
 def should_skip_push(local_date: dt.date) -> bool:
-    if env("FORCE_PUSH") == "workflow_dispatch":
+    if env("FORCE_PUSH").lower() == "true":
         return False
     if env("DRY_RUN", "0") == "1":
         return False
