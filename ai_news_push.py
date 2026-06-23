@@ -15,8 +15,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 
-WECHAT_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token"
-WECHAT_TEMPLATE_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send"
+PUSHPLUS_SEND_URL = "https://www.pushplus.plus/send"
 DEFAULT_OPENAI_BASE_URL = "https://api.openai.com/v1"
 DEFAULT_USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -503,16 +502,6 @@ def truncate_wechat_value(value: str, limit: int = 1800) -> str:
     return value[: limit - 20].rstrip() + "\n...(内容过长已截断)"
 
 
-def get_wechat_access_token() -> str:
-    app_id = env("WECHAT_APP_ID", required=True)
-    app_secret = env("WECHAT_APP_SECRET", required=True)
-    url = f"{WECHAT_TOKEN_URL}?grant_type=client_credential&appid={urllib.parse.quote(app_id)}&secret={urllib.parse.quote(app_secret)}"
-    response = http_request(url)
-    if not isinstance(response, dict) or "access_token" not in response:
-        raise RuntimeError(f"Failed to get WeChat access token: {response}")
-    return response["access_token"]
-
-
 def report_public_url(target_date: dt.date) -> str:
     base_url = env("REPORT_BASE_URL")
     if not base_url:
@@ -520,34 +509,33 @@ def report_public_url(target_date: dt.date) -> str:
     return f"{base_url.rstrip('/')}/reports/{target_date.isoformat()}.html"
 
 
-def push_wechat(content: str, target_date: dt.date) -> dict:
-    token = get_wechat_access_token()
-    url = f"{WECHAT_TEMPLATE_URL}?access_token={urllib.parse.quote(token)}"
+def format_pushplus_markdown(content: str, target_date: dt.date) -> str:
     max_items = int(env("MAX_NEWS_ITEMS", "8"))
     digest = format_adaptive_digest(content, max_items)
-    print(f"WeChat digest preview: {textwrap.shorten(digest.replace(chr(10), ' / '), width=500, placeholder='...')}")
+    report_url = report_public_url(target_date)
+    parts = [
+        f"## {target_date.isoformat()} AI 新闻晨报",
+        "",
+        digest,
+    ]
+    if report_url:
+        parts.extend(["", f"[查看完整日报]({report_url})"])
+    return "\n".join(parts)
+
+
+def push_pushplus(content: str, target_date: dt.date) -> dict:
+    token = env("PUSHPLUS_TOKEN", required=True)
+    markdown = format_pushplus_markdown(content, target_date)
+    print(f"PushPlus preview: {textwrap.shorten(markdown.replace(chr(10), ' / '), width=500, placeholder='...')}")
     payload = {
-        "touser": env("WECHAT_OPENID", required=True),
-        "template_id": env("WECHAT_TEMPLATE_ID", required=True),
-        "url": report_public_url(target_date),
-        "data": {
-            "first": {"value": "昨日 AI 新闻晨报", "color": "#173177"},
-            "keyword1": {"value": target_date.isoformat(), "color": "#173177"},
-            "keyword2": {"value": "AI 新闻汇总", "color": "#173177"},
-            "keyword3": {"value": truncate_wechat_value(digest, 900), "color": "#111111"},
-            "remark": {"value": "点击卡片阅读完整日报。", "color": "#666666"},
-        },
+        "token": token,
+        "title": f"{target_date.isoformat()} AI 新闻晨报",
+        "content": markdown,
+        "template": "markdown",
     }
-    response = http_request(url, method="POST", payload=payload)
-    if not isinstance(response, dict) or response.get("errcode") != 0:
-        if isinstance(response, dict) and response.get("errcode") == 40037:
-            raise RuntimeError(
-                "WeChat push failed: invalid WECHAT_TEMPLATE_ID. "
-                "Use the template_id generated in the same WeChat sandbox/test account as WECHAT_APP_ID. "
-                "Do not use the template title, template content, or a template_id from another account. "
-                f"Raw response: {response}"
-            )
-        raise RuntimeError(f"WeChat push failed: {response}")
+    response = http_request(PUSHPLUS_SEND_URL, method="POST", payload=payload)
+    if not isinstance(response, dict) or response.get("code") != 200:
+        raise RuntimeError(f"PushPlus push failed: {response}")
     return response
 
 
@@ -574,11 +562,11 @@ def main() -> int:
     else:
         print(textwrap.shorten(content.replace("\n", " "), width=500, placeholder="..."))
     if env("DRY_RUN", "0") == "1":
-        print("\nDRY_RUN=1, skipped WeChat push.")
+        print("\nDRY_RUN=1, skipped PushPlus push.")
         return 0
 
-    result = push_wechat(content, target_date)
-    print(f"WeChat push succeeded: msgid={result.get('msgid')}")
+    result = push_pushplus(content, target_date)
+    print(f"PushPlus push succeeded: {result}")
     return 0
 
 
