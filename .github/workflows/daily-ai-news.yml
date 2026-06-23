@@ -2,7 +2,7 @@ name: Daily AI News
 
 on:
   schedule:
-    - cron: "12 3 * * *"
+    - cron: "0 4 * * *"
   workflow_dispatch:
 
 permissions:
