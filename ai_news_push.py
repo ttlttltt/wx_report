@@ -276,14 +276,16 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
 要求：
 - 日期是 {target_date.isoformat()} 的昨日 AI 新闻。
 - 最多保留 {max_items} 条。
-- 每条只输出一行，格式是“标题｜一句话影响判断”。
-- 不要输出序号，模板会自动编号。
-- 不要输出链接，不要输出来源，不要输出长摘要。
-- 每条影响判断不超过 35 个中文字符。
+- 使用 Markdown 输出。
+- 每条新闻使用以下结构：
+  ### 序号. 标题
+  摘要：用 1-2 句话说明发生了什么。
+  影响：说明这件事为什么值得关注，避免空泛判断。
+  链接：原文链接
 - 优先保留官方发布、开发者生态、严肃分析；弱化转载、融资噪音、纯观点水文。
 - 删除低价值、重复、营销味重的内容。
 - 不要编造新闻里没有的信息。
-- 输出适合直接在微信模板消息里阅读，简洁但有判断。
+- 不要输出开场白或结尾总结，只输出新闻条目。
 
 新闻：
 {source_text}
@@ -314,10 +316,14 @@ def summarize_with_openai(items: list[NewsItem], target_date: dt.date) -> str:
 
 def format_without_ai(items: list[NewsItem], target_date: dt.date) -> str:
     if not items:
-        return f"{target_date.isoformat()} 没有抓到符合条件的昨日 AI 新闻。"
+        return f"昨日没有抓到符合条件的 AI 新闻。"
     lines = []
-    for item in items:
-        lines.append(format_digest_line(item.title, compact_impact(item)))
+    for idx, item in enumerate(items, start=1):
+        lines.append(f"### {idx}. {item.title}")
+        summary = item.summary[:180].rstrip() if item.summary else "暂无摘要。"
+        lines.append(f"摘要：{summary}")
+        lines.append(f"影响：{compact_impact(item)}")
+        lines.append(f"链接：{item.link}")
         lines.append("")
     return "\n".join(lines).strip()
 
@@ -371,14 +377,14 @@ def split_digest_items(content: str, max_items: int = 8) -> list[str]:
 
 
 def format_adaptive_digest(content: str, max_items: int = 8) -> str:
-    items = split_digest_items(content, max_items)
-    if not items:
+    content = content.strip()
+    if not content:
         return "昨日没有筛选出值得推送的 AI 新闻。"
-    return "\n".join(f"{idx}. {item}" for idx, item in enumerate(items, start=1))
+    return content
 
 
 def generate_html_report(content: str, target_date: dt.date) -> str:
-    items = split_digest_items(content, int(env("MAX_NEWS_ITEMS", "8")))
+    items = split_markdown_digest(content, int(env("MAX_NEWS_ITEMS", "8")))
     item_html = "\n".join(
         f"<li><span>{html.escape(item)}</span></li>"
         for item in items
@@ -493,6 +499,16 @@ def write_report(content: str, target_date: dt.date) -> str:
     dated.write_text(html_report, encoding="utf-8")
     latest.write_text(html_report, encoding="utf-8")
     return str(dated)
+
+
+def split_markdown_digest(content: str, max_items: int = 8) -> list[str]:
+    raw = content.strip()
+    if not raw:
+        return []
+    blocks = [block.strip() for block in re.split(r"\n(?=###\s+\d+[\.、:：]\s*)", raw) if block.strip()]
+    if len(blocks) <= 1:
+        blocks = [block.strip() for block in re.split(r"\n\s*\n", raw) if block.strip()]
+    return blocks[:max_items]
 
 
 def truncate_wechat_value(value: str, limit: int = 1800) -> str:
