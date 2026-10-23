@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-10-23 AI 新闻晨报</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #202124;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1769aa;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+    header {
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: news;
+    }
+    li {
+      counter-increment: news;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    li::before {
+      content: counter(news);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: inline-grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    li span {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AI 新闻晨报</h1>
+      <div class="meta">2026-10-23 · 自动筛选摘要 · 最多 8 条</div>
+    </header>
+    <ol>
+      <li><span>### 1. Securing our frontier model training environment
+摘要：OpenAI explains how we strengthened containment for frontier model training and evaluation, including offline environments and high-compute red-teaming.
+影响：OpenAI explains how we strengthened containme...
+链接：https://openai.com/index/securing-our-frontier-model-training-environment</span></li>
+<li><span>### 2. OpenAI and Poland’s NASK partner to advance AI safety and security
+摘要：OpenAI and Poland’s NASK are partnering on AI safety, security, and technical research to strengthen safeguards and support a more resilient digital ecosystem.
+影响：OpenAI and Poland’s NASK are partnering on AI...
+链接：https://openai.com/index/openai-nask-ai-safety-security-partnership</span></li>
+<li><span>### 3. Does Your Model Run on AWS Trainium? Look It Up
+摘要：暂无摘要。
+影响：开发者生态变化，可能影响工具选择。
+链接：https://huggingface.co/blog/torch-neuronx-model-support</span></li>
+<li><span>### 4. Turning Database Grading into RL Rewards: Post-Training Agents with ThinkingBox
+摘要：暂无摘要。
+影响：开发者生态变化，可能影响工具选择。
+链接：https://huggingface.co/blog/microsoft/thinkingbox-training</span></li>
+<li><span>### 5. Designing an AI serving harness built to last
+摘要：The next competitive advantage in enterprise AI has less to do with which model you choose than with what you build around it. That’s an important shift. For the past several years
+影响：The next competitive advantage in enterprise...
+链接：https://www.technologyreview.com/2026/10/22/1146109/designing-an-ai-serving-harness-built-to-last/</span></li>
+<li><span>### 6. The Foundations of Scalable AI
+摘要：A scalable AI system requires a strong foundation. Data, engineering, platforms, operating models, and governance must converge to work as one. This session from MIT Technology Rev
+影响：A scalable AI system requires a strong founda...
+链接：https://www.technologyreview.com/2026/10/22/1146103/the-foundations-of-scalable-ai/</span></li>
+<li><span>### 7. Uber rival inDrive eyes 2027 robotaxi tests in Central Asia with Pony AI and Nvidia
+摘要：The company plans to begin testing Pony.ai&#x27;s robotaxis in Kazakhstan&#x27;s capital in the first half of 2027.
+影响：The company plans to begin testing Pony.ai&#x27;s...
+链接：https://techcrunch.com/2026/10/22/uber-rival-indrive-eyes-2027-robotaxi-tests-in-central-asia-with-pony-ai-and-nvidia/</span></li>
+<li><span>### 8. Left alone with nothing to do, AI agents started playing
+摘要：MIT researchers marooned 13 AIs on a virtual island, and they responded by inventing games, mourning a lost ring and, eventually, getting better at their jobs.
+影响：MIT researchers marooned 13 AIs on a virtual...
+链接：https://techcrunch.com/2026/10/22/left-alone-with-nothing-to-do-ai-agents-started-playing/</span></li>
+    </ol>
+    <footer>由 GitHub Actions 自动生成。微信卡片只显示预览，完整内容以本页为准。</footer>
+  </main>
+</body>
+</html>
