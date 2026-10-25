@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-10-25 AI 新闻晨报</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #202124;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1769aa;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+    header {
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: news;
+    }
+    li {
+      counter-increment: news;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    li::before {
+      content: counter(news);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: inline-grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    li span {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AI 新闻晨报</h1>
+      <div class="meta">2026-10-25 · 自动筛选摘要 · 最多 8 条</div>
+    </header>
+    <ol>
+      <li><span>### 1. The hottest AI wearables and gadgets you should know about
+摘要：We compiled a list of all the hottest AI wearables, including Muse Charm, Bee, Friend, Plaud, and more.
+影响：We compiled a list of all the hottest AI wear...
+链接：https://techcrunch.com/2026/10/25/the-hottest-ai-wearables-and-gadgets-you-should-know-about/</span></li>
+<li><span>### 2. The AI graveyard: a running list of projects and startups that didn’t make it
+摘要：From Apple&#x27;s repeatedly delayed Siri AI to OpenAI&#x27;s messy &quot;super app&quot; launch, here&#x27;s a look at the AI projects that shut down or missed expectations.
+影响：From Apple&#x27;s repeatedly delayed Siri AI to Op...
+链接：https://techcrunch.com/2026/10/24/the-ai-graveyard-a-running-list-of-projects-and-startups-that-didnt-make-it/</span></li>
+<li><span>### 3. Block’s new voice model sounds eerily human
+摘要：Block said that the voice model can run locally on a MacBook M4 Max
+影响：Block said that the voice model can run local...
+链接：https://techcrunch.com/2026/10/24/blocks-new-voice-model-sounds-eerily-human/</span></li>
+    </ol>
+    <footer>由 GitHub Actions 自动生成。微信卡片只显示预览，完整内容以本页为准。</footer>
+  </main>
+</body>
+</html>
