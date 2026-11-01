@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-11-01 AI 新闻晨报</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #202124;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1769aa;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+    header {
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: news;
+    }
+    li {
+      counter-increment: news;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    li::before {
+      content: counter(news);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: inline-grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    li span {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AI 新闻晨报</h1>
+      <div class="meta">2026-11-01 · 自动筛选摘要 · 最多 8 条</div>
+    </header>
+    <ol>
+      <li><span>### 1. Apple CEO says the company doesn’t ‘want to ship AI for AI’s sake’
+摘要：Apple&#x27;s new CEO defended the company&#x27;s current position in the AI landscape.
+影响：Apple&#x27;s new CEO defended the company&#x27;s curren...
+链接：https://techcrunch.com/2026/10/31/apple-ceo-says-the-company-doesnt-want-to-ship-ai-for-ais-sake/</span></li>
+<li><span>### 2. Judge allows NAACP lawsuit over xAI data center pollution to move forward
+摘要：An NAACP lawsuit accuses the SpaceX-owned AI company of violating the Clean Air Act.
+影响：An NAACP lawsuit accuses the SpaceX-owned AI...
+链接：https://techcrunch.com/2026/10/31/judge-allows-naacp-lawsuit-over-xai-data-center-pollution-to-move-forward/</span></li>
+<li><span>### 3. OpenAI reportedly lowers funding target for new round
+摘要：OpenAI’s latest funding round doesn&#x27;t seem to be living up to expectations.
+影响：OpenAI’s latest funding round doesn&#x27;t seem to...
+链接：https://techcrunch.com/2026/10/31/openai-reportedly-lowers-funding-target-for-new-round/</span></li>
+<li><span>### 4. 三年前布局，今年爆火丨西湖大学成立新中心
+摘要：西湖世界模型研究中心成立
+影响：西湖世界模型研究中心成立
+链接：https://www.qbitai.com/2026/11/507076.html</span></li>
+<li><span>### 5. Claude紧急叫停！暗改Harness禁止逆向游戏
+摘要：暂无摘要。
+影响：行业动态，适合快速了解市场变化。
+链接：https://www.qbitai.com/2026/11/507038.html</span></li>
+<li><span>### 6. 清华姚期智团队新作：代数世界模型，让AI像牛顿一样思考
+摘要：让AI像牛顿一样思考
+影响：让AI像牛顿一样思考
+链接：https://www.qbitai.com/2026/11/507031.html</span></li>
+    </ol>
+    <footer>由 GitHub Actions 自动生成。微信卡片只显示预览，完整内容以本页为准。</footer>
+  </main>
+</body>
+</html>
