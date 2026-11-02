@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2026-11-02 AI 新闻晨报</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #202124;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1769aa;
+    }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+    header {
+      margin-bottom: 18px;
+    }
+    h1 {
+      margin: 0 0 6px;
+      font-size: 26px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: news;
+    }
+    li {
+      counter-increment: news;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      margin: 12px 0;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    li::before {
+      content: counter(news);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      display: inline-grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    li span {
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AI 新闻晨报</h1>
+      <div class="meta">2026-11-02 · 自动筛选摘要 · 最多 8 条</div>
+    </header>
+    <ol>
+      <li><span>### 1. Introducing the Grid Protectors Program
+摘要：OpenAI’s Grid Protectors Program will work with utilities to help future compute campuses support grid reliability and protect consumer electricity costs.
+影响：OpenAI’s Grid Protectors Program will work wi...
+链接：https://openai.com/index/grid-protectors-program</span></li>
+<li><span>### 2. LifeVal
+摘要：Introducing LifeVal, a benchmark measuring how well AI helps people complete everyday tasks, from finding childcare to managing finances and government paperwork.
+影响：Introducing LifeVal, a benchmark measuring ho...
+链接：https://openai.com/index/lifeval</span></li>
+<li><span>### 3. Qodo builds context into AI code review with Codex
+摘要：Qodo brings company knowledge and coding standards into Codex, helping developers catch P0 issues across repositories before opening a pull request.
+影响：Qodo brings company knowledge and coding stan...
+链接：https://openai.com/index/qodo-codex-plugin</span></li>
+<li><span>### 4. Stop counting tokens, start counting what ships
+摘要：When a developer gives an AI agent a coding task, the agent does more than answer once. It plans, generates code, runs tests, and repeats the process to correct errors. A single ta
+影响：When a developer gives an AI agent a coding t...
+链接：https://www.technologyreview.com/2026/11/02/1147702/stop-counting-tokens-start-counting-what-ships/</span></li>
+<li><span>### 5. The agentic web is here
+摘要：In 2001, a decade after he invented the World Wide Web, Tim Berners-Lee articulated a new vision. Together with two colleagues, he published an article in the magazine Scientific A
+影响：In 2001, a decade after he invented the World...
+链接：https://www.technologyreview.com/2026/11/02/1147846/the-agentic-web-is-here/</span></li>
+<li><span>### 6. Omen AI adds liquid know-how in $16 million Aquatic Labs acquisition
+摘要：Two startups tackling the data center water problem are joining forces in a $16 million deal.
+影响：Two startups tackling the data center water p...
+链接：https://techcrunch.com/2026/11/02/omen-ai-adds-liquid-know-how-in-16-million-aquatic-labs-acquisition/</span></li>
+<li><span>### 7. OpenAI is finally merging ChatGPT’s Chat and Work tabs
+摘要：OpenAI said that ChatGPT and Codex will draw usage from the same allocation pool after this change.
+影响：OpenAI said that ChatGPT and Codex will draw...
+链接：https://techcrunch.com/2026/11/02/openai-is-finally-merging-chatgpts-chat-and-work-tabs/</span></li>
+<li><span>### 8. OpenAI might rebrand its data centers as ‘AI compute campuses’
+摘要：Data centers are deeply unpopular. But what if we called them something else?
+影响：Data centers are deeply unpopular. But what i...
+链接：https://techcrunch.com/2026/11/01/openai-might-rebrand-its-data-centers-as-ai-compute-campuses/</span></li>
+    </ol>
+    <footer>由 GitHub Actions 自动生成。微信卡片只显示预览，完整内容以本页为准。</footer>
+  </main>
+</body>
+</html>
